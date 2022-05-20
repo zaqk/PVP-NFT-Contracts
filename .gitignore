@@ -1,0 +1,16 @@
+# general
+.env
+.DS_Store
+
+node_modules
+deployments
+
+
+# hardhat
+artifacts
+cache
+
+#vscode
+.vscode/extensions.json
+.vscode/launch.json
+.vscode/settings.json
