@@ -16,14 +16,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   'http://localhost:8080/api/turing-proximity' : // local
   'https://contract-playground.herokuapp.com/api/turing-proximity'; // testnet
 
-  console.log(`got here`)
-
   const turingHelperInfo = await deploy('TuringHelper', {
     from: deployer,
     log: true,
   })
-
-  console.log(`got here 123`)
 
   const turingHelper = new ethers.Contract(
     turingHelperInfo.address,
@@ -31,21 +27,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     signer,
   )
 
-  console.log(`got here 456`)
-
   const entityInfo = await deploy('Entity', {
     from: deployer,
     log: true,
     args: [turingHelperInfo.address, api],
   })
 
-  console.log(`got here 789`)
-
-
   await turingHelper.addPermittedCaller(entityInfo.address)
 
-  console.log(`got here final`)
-
 };
-func.tags = ['main', 'local', 'seed'];
 export default func;
