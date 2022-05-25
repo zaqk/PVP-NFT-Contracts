@@ -55,7 +55,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`balanceOf ===${await bobaGasToken.balanceOf(signer.address)}`);
   
   const gasToSend = ethers.utils.parseEther('100')
-  //bobaGasToken.approve(turingCredit.address, gasToSend);
+  bobaGasToken.approve(turingCredit.address, gasToSend);
 
   const tx = await turingCredit.addBalanceTo(gasToSend, turingHelper.address, {gasLimit:5_000_000})
   const result = await tx.wait();
