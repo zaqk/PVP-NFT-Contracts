@@ -4,8 +4,6 @@ pragma solidity 0.8.13;
 import "@rari-capital/solmate/src/tokens/ERC721.sol";
 import "./TuringHelper.sol";
 
-import "hardhat/console.sol";
-
 contract Entity is ERC721 {
 
   uint256 public tokenId;
@@ -49,15 +47,12 @@ contract Entity is ERC721 {
   }
 
   function attack(uint256 _attacker, uint256 _target) external {
-    //require(msg.sender == ownerOf[_attacker], "Unauthorized");
+    require(msg.sender == ownerOf[_attacker], "Unauthorized");
     require(health[_attacker] > 0, "Attacker is dead");
     require(health[_target] > 0, "Target is dead");
 
-    //console.logBytes(abi.encode(true, false));
-
     // turing proximity check
     bytes memory payload = abi.encode(_attacker, _target);
-    //console.logBytes(payload); // only works locally
     emit Request(payload);
 
     bytes memory resp = turing.TuringTx(api, payload);

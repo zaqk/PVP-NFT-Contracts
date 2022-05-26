@@ -5,8 +5,8 @@ import bobaTuringCreditAbi from '../abis/BobaTuringCredit.json';
 
 // mint entities of FE then call this script to test proximity
 // will sucessfully attack if entities are within proxmity.
-let tokenId1: BigNumber | null = BigNumber.from(7);
-let tokenId2: BigNumber | null = BigNumber.from(8);
+let tokenId1: BigNumber | null = BigNumber.from(1);
+let tokenId2: BigNumber | null = BigNumber.from(2);
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts, ethers} = hre;
@@ -37,6 +37,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
 
   if ( !tokenId1 || !tokenId2 ) {
+    console.log('here')
     // mint new tokens
     const token1Tx = await entity.mint();
     const token2Tx = await entity.mint();
@@ -44,6 +45,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     // grab new token ids
     const tokenTxRes1 = await token1Tx.wait();
     const tokenTxRes2 = await token2Tx.wait();
+
+    console.log(`tokenTxRes1 === ${JSON.stringify(tokenTxRes1)}`);
+    console.log(`tokenTxRes2 === ${JSON.stringify(tokenTxRes2)}`);
+
 
     const event1: {args: {tokenId: BigNumber} } = tokenTxRes1.events.find((event: { event: string; }) => event.event === 'NewEntity');
     const tokenId1 = event1.args.tokenId;
@@ -56,7 +61,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     console.log(`using preexisting tokens, tokenId1 === ${tokenId1}, tokenId2 === ${tokenId2}`);
   }
 
-  const tx = await entity.attack(tokenId1, tokenId2, {gasLimit: 5_000_000});
+  const gasLimit = await entity.estimateGas.attack(tokenId1, tokenId2);
+  const tx = await entity.attack(tokenId1, tokenId2, {gasLimit});
   const result = await tx.wait();
   console.log(`result === ${JSON.stringify(result)}`);
   

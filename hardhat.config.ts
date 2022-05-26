@@ -18,7 +18,7 @@ const config: HardhatUserConfig =  {
     },
     bobabase: {
       chainId: 1297,
-      url: "https://replica.bobabase.boba.network",
+      url: "https://bobabase.boba.network/",
       accounts: {
         mnemonic: process.env.MNEMONIC
       },
