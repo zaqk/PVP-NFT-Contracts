@@ -14,9 +14,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log(`chainId === ${chainId}`)
 
-  let api = chainId === '31337' ? 
+  const isLocal = chainId === '31337';
+
+  let api = isLocal ? 
   'http://localhost:8080/api/turing-proximity' : // local
   'https://contract-playground.herokuapp.com/api/turing-proximity'; // testnet
+
+  console.log(`using api endpoint === ${api}`);
 
   const turingHelperInfo = await deploy('TuringHelper', {
     from: deployer,
@@ -33,7 +37,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     log: true,
     args: [turingHelperInfo.address, api],
   })
-  //await turingHelper.addPermittedCaller(entityInfo.address)
+  await turingHelper.addPermittedCaller(entityInfo.address)
 
   // fund turing credit account
   const bobaTuringCreditAddress = '0x4200000000000000000000000000000000000020';
@@ -53,11 +57,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
 
   console.log(`balanceOf ===${await bobaGasToken.balanceOf(signer.address)}`);
-  
-  const gasToSend = ethers.utils.parseEther('100')
-  bobaGasToken.approve(turingCredit.address, gasToSend);
 
-  const tx = await turingCredit.addBalanceTo(gasToSend, turingHelper.address, {gasLimit:5_000_000})
+  
+  const gasToSend = ethers.utils.parseEther('1')
+
+  const tx = await turingCredit.addBalanceTo(gasToSend, turingHelper.address, {value: gasToSend, gasLimit:5_000_000})
   const result = await tx.wait();
   const balanceAmountAdded = result.events.find((event: { event: string}) => event.event === 'AddBalanceTo');
   console.log(`balanceAmountAdded === ${JSON.stringify(balanceAmountAdded)}`);
