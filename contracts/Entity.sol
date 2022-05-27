@@ -58,10 +58,10 @@ contract Entity is ERC721 {
     bytes memory resp = turing.TuringTx(api, payload);
     emit PayloadReceived(resp);
 
-    bool isInProximity = abi.decode(payload, (bool));
+    bool isInProximity = abi.decode(resp, (bool));
     emit ProximityResult(_attacker, _target, isInProximity);
 
-    //require(isInProximity, "Attacker is out of range");
+    require(isInProximity, "Attacker is out of range");
 
     health[_target]--;
     emit Attack(_attacker, _target);
